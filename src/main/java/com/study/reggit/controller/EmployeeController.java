@@ -45,8 +45,19 @@ public class EmployeeController {
       return R.error("该账户已被禁用");
     }
 
-    request.getSession().setAttribute("Employee", currentEmployee.getId());
+    request.getSession().setAttribute("employee", currentEmployee.getId());
 
     return R.success(currentEmployee);
+  }
+
+  /**
+   * 退出登录
+   * @param request
+   * @return
+   */
+  @PostMapping("/logout")
+  public R<String> logout(HttpServletRequest request) {
+    request.getSession().removeAttribute("employee");
+    return R.success("");
   }
 }
