@@ -103,4 +103,29 @@ public class EmployeeController {
 
     return R.success(pageInfo);
   }
+
+  /**
+   * 更新员工信息
+   * @param request
+   * @param employee
+   * @return
+   */
+  @PutMapping
+  public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
+    LocalDateTime nowTime = LocalDateTime.now();
+    employee.setUpdateTime(nowTime);
+
+    Long userId = (Long) request.getSession().getAttribute("employee");
+    employee.setUpdateUser(userId);
+
+    employeeService.updateById(employee);
+
+    return R.success("更新成功");
+  }
+
+  @GetMapping("/{id}")
+  public R<Employee> getById(@PathVariable Long id) {
+    Employee employee = employeeService.getById(id);
+    return R.success(employee);
+  }
 }
