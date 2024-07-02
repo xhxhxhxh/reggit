@@ -1,7 +1,6 @@
 package com.study.reggit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.study.reggit.common.R;
 import com.study.reggit.entity.Employee;
 import com.study.reggit.service.EmployeeService;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -59,5 +59,22 @@ public class EmployeeController {
   public R<String> logout(HttpServletRequest request) {
     request.getSession().removeAttribute("employee");
     return R.success("");
+  }
+
+  @PostMapping
+  public R<String> add(HttpServletRequest request, @RequestBody Employee employee) {
+    employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+
+    LocalDateTime nowTime = LocalDateTime.now();
+    employee.setCreateTime(nowTime);
+    employee.setUpdateTime(nowTime);
+
+    Long userId = (Long) request.getSession().getAttribute("employee");
+    employee.setCreateUser(userId);
+    employee.setUpdateUser(userId);
+
+    employeeService.save(employee);
+
+    return R.success("新增用户成功");
   }
 }
