@@ -19,4 +19,9 @@ public class GlobalExceptionHandler {
     log.error(e.getMessage());
     return R.error("数据库操作失败");
   }
+
+  @ExceptionHandler(CustomException.class)
+  public R<String> customExceptionHandler(CustomException e) {
+    return R.error(e.getMessage());
+  }
 }
