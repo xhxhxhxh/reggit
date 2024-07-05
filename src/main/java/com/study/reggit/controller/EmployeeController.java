@@ -70,13 +70,13 @@ public class EmployeeController {
   public R<String> add(HttpServletRequest request, @RequestBody Employee employee) {
     employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 
-    LocalDateTime nowTime = LocalDateTime.now();
-    employee.setCreateTime(nowTime);
-    employee.setUpdateTime(nowTime);
-
-    Long userId = (Long) request.getSession().getAttribute("employee");
-    employee.setCreateUser(userId);
-    employee.setUpdateUser(userId);
+//    LocalDateTime nowTime = LocalDateTime.now();
+//    employee.setCreateTime(nowTime);
+//    employee.setUpdateTime(nowTime);
+//
+//    Long userId = (Long) request.getSession().getAttribute("employee");
+//    employee.setCreateUser(userId);
+//    employee.setUpdateUser(userId);
 
     employeeService.save(employee);
 
@@ -112,11 +112,11 @@ public class EmployeeController {
    */
   @PutMapping
   public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
-    LocalDateTime nowTime = LocalDateTime.now();
-    employee.setUpdateTime(nowTime);
-
-    Long userId = (Long) request.getSession().getAttribute("employee");
-    employee.setUpdateUser(userId);
+//    LocalDateTime nowTime = LocalDateTime.now();
+//    employee.setUpdateTime(nowTime);
+//
+//    Long userId = (Long) request.getSession().getAttribute("employee");
+//    employee.setUpdateUser(userId);
 
     employeeService.updateById(employee);
 
