@@ -18,7 +18,7 @@ import com.study.reggit.common.R;
 @Slf4j
 public class LoginCheckFilter implements Filter {
   private final AntPathMatcher matcher = new AntPathMatcher();
-  private final String[] urls = {"/employee/login", "/employee/logout", "/backend/**", "/front/**"};
+  private final String[] urls = {"/employee/login", "/employee/logout", "/backend/**", "/front/**", "/common/**"};
 
   @Override
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
