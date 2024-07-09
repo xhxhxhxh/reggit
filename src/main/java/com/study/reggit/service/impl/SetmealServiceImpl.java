@@ -3,6 +3,7 @@ package com.study.reggit.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.reggit.common.CustomException;
+import com.study.reggit.dto.SetmealDto;
 import com.study.reggit.entity.Setmeal;
 import com.study.reggit.entity.SetmealDish;
 import com.study.reggit.mapper.SetmealMapper;
@@ -32,5 +33,16 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
     setmealDishService.remove(setmealDishWrapper);
 
     super.removeByIds(ids);
+  }
+
+
+  public void save(SetmealDto setmealDto) {
+    super.save(setmealDto);
+    List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
+    setmealDishes.forEach(item -> {
+      item.setSetmealId(setmealDto.getId());
+    });
+
+    setmealDishService.saveBatch(setmealDishes);
   }
 }

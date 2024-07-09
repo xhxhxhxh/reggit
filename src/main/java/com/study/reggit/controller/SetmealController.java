@@ -1,6 +1,7 @@
 package com.study.reggit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.study.reggit.common.R;
 
@@ -46,7 +47,7 @@ public class SetmealController {
     // 拷贝对象
     BeanUtils.copyProperties(pageInfo, setmealDtoPageInfo,"records");
 
-    if (setmealDtoPageInfo.getRecords().isEmpty()) {
+    if (pageInfo.getRecords().isEmpty()) {
       return R.success(setmealDtoPageInfo);
     }
 
@@ -79,5 +80,19 @@ public class SetmealController {
   public R<String> delete(@RequestParam List<Long> ids) {
     setmealService.removeByIds(ids);
     return R.success("删除成功");
+  }
+
+  @PostMapping
+  public R<String> add(@RequestBody SetmealDto setmealDto) {
+    setmealService.save(setmealDto);
+    return R.success("添加成功");
+  }
+
+  @PostMapping("/status/{status}")
+  public R<String> updateStatus(@PathVariable Integer status, @RequestParam List<Long> ids) {
+    LambdaUpdateWrapper<Setmeal> updateWrapper = new LambdaUpdateWrapper<>();
+    updateWrapper.in(Setmeal::getId, ids).set(Setmeal::getStatus, status);
+    setmealService.update(updateWrapper);
+    return R.success("修改成功");
   }
 }
