@@ -1,5 +1,6 @@
 package com.study.reggit.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.reggit.dto.DishDto;
 import com.study.reggit.entity.Dish;
@@ -31,5 +32,21 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     dishFlavorService.saveBatch(flavors);
 
+  }
+
+  @Transactional
+  public void updateWithFlavor(DishDto dishDto) {
+    this.updateById(dishDto);
+
+    LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+    queryWrapper.eq(DishFlavor::getDishId, dishDto.getId());
+    dishFlavorService.remove(queryWrapper);
+
+    List<DishFlavor> flavors = dishDto.getFlavors();
+    flavors.forEach(flavorDto -> {
+      flavorDto.setDishId(dishDto.getId());
+    });
+
+    dishFlavorService.saveBatch(flavors);
   }
 }
