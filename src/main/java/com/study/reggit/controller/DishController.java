@@ -14,11 +14,14 @@ import com.study.reggit.service.DishService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,6 +33,8 @@ public class DishController {
   private DishFlavorService dishFlavorService;
   @Autowired
   private CategoryService categoryService;
+  @Autowired
+  private RedisTemplate<String, Object> redisTemplate;
 
   /**
    * 新增菜品
@@ -39,22 +44,41 @@ public class DishController {
   @PostMapping
   public R<String> save(@RequestBody DishDto dishDto) {
     dishService.saveWithFlavor(dishDto);
+    Set<String> keys = redisTemplate.keys("dish_" + dishDto.getCategoryId() + "_*");
+    if (keys != null) {
+      redisTemplate.delete(keys);
+    }
     return R.success("新增菜品成功");
   }
 
   @PutMapping
   public R<String> update(@RequestBody DishDto dishDto) {
     dishService.updateWithFlavor(dishDto);
+    Set<String> keys = redisTemplate.keys("dish_" + dishDto.getCategoryId() + "_*");
+    if (keys != null) {
+      redisTemplate.delete(keys);
+    }
     return R.success("保存菜品成功");
   }
 
   @GetMapping("/list")
   public R<List<Dish>> getListByCategory(Dish dish) {
+    List<Dish> dishList;
+    String key = "dish_" + dish.getCategoryId() + '_' + dish.getStatus();
+    dishList = (List<Dish>) redisTemplate.opsForValue().get(key);
+
+    if (dishList != null) {
+      System.out.println(222);
+      return R.success(dishList);
+    }
+
     LambdaQueryWrapper<Dish> dishWrapper = new LambdaQueryWrapper<>();
     dishWrapper.eq(Dish::getCategoryId, dish.getCategoryId());
     dishWrapper.eq(Dish::getStatus, 1);
     dishWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-    List<Dish> dishList = dishService.list(dishWrapper);
+    dishList = dishService.list(dishWrapper);
+    redisTemplate.opsForValue().set(key, dishList, 60, TimeUnit.MINUTES);
+    System.out.println(111);
     return R.success(dishList);
   }
 

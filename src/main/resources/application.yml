@@ -9,6 +9,8 @@ spring:
       url: jdbc:mysql://203.195.246.216:3306/reggit?useSSL=false
       username: root
       password: 4010986
+  redis:
+    database: 0
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
